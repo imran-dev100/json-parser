@@ -15,7 +15,7 @@ repositories {
 dependencies {
 
   /*___________________________Application Core Dependencies__________________________*/
-  implementation 'org.springframework.boot:spring-boot-starter'
+  implementation 'org.springframework.boot:spring-boot-starter-web'
   compileOnly 'org.projectlombok:lombok:1.18.30'
   annotationProcessor 'org.projectlombok:lombok:1.18.30' 
    
