@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TimeZone;
 
 import org.json.JSONException;
@@ -52,23 +54,26 @@ class JsonLoaderTest {
 		final Path resourceDirectory = Paths.get("src", "test", "resources", "apx-data.json");
 		final String filepath = resourceDirectory.toFile().getAbsolutePath();
 		final QuoteResponse response = jsonLoader.loadQuotes("file:".concat(filepath));
-		generateExpectedOutput(response);
-		assertEquals(true, null != response);
+		final List<JSONObject> output = generateExpectedOutput(response);
+		assertEquals(24, output.size());
+		output.stream().forEach(System.out::println);
 	}
 
-	private void generateExpectedOutput(final QuoteResponse response) {
-		response.getQuotes().stream().forEach(quote -> processEachQuote(quote));
+	private List<JSONObject> generateExpectedOutput(final QuoteResponse response) {
+		final List<JSONObject> jsonObjects = new ArrayList<>();
+		response.getQuotes().stream().forEach(quote -> jsonObjects.add(processEachQuote(quote)));
+		return jsonObjects;
 	}
 
-	private void processEachQuote(final Quote quote) {
+	private JSONObject processEachQuote(final Quote quote) {
+		final JSONObject jsonObject = new JSONObject();
 		try {
-			final JSONObject jsonObject = new JSONObject();
 			jsonObject.put(DATE, quote.getDateApplied());
 			quote.getQuoteValues().stream().forEach(quoteValue -> processEachQuoteValue(jsonObject, quoteValue));
-			System.out.println(jsonObject.toString(2));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+		return jsonObject;
 	}
 
 	private void processEachQuoteValue(final JSONObject jsonObject, final QuoteValue quoteValue) {
